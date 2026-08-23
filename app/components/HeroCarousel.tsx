@@ -12,7 +12,7 @@ type Slide = {
 const slides: Slide[] = [
   {
     image:
-      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=75",
     title: "Transform Your Business with Global Consulting",
     subtitle:
       "Expert guidance in ERP, CRM, and bespoke solutions to drive your success.",
@@ -20,7 +20,7 @@ const slides: Slide[] = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=75",
     title: "Scalable Outsourcing Solutions",
     subtitle:
       "Empower your teams with our dedicated BPO and Lead Generation services.",
@@ -28,7 +28,7 @@ const slides: Slide[] = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=2072&q=80",
+      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=75",
     title: "Modern Web Development",
     subtitle:
       "Cutting-edge digital experiences built for performance and growth.",
@@ -52,6 +52,7 @@ export default function HeroCarousel() {
       {slides.map((slide, i) => (
         <div
           key={i}
+          aria-hidden={i !== index}
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
             i === index ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
@@ -64,9 +65,15 @@ export default function HeroCarousel() {
           </div>
           <div className="relative z-20 h-full container mx-auto px-6 md:px-12 flex flex-col justify-center text-white">
             <div className="max-w-3xl">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-                {slide.title}
-              </h1>
+              {i === 0 ? (
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
+                  {slide.title}
+                </h1>
+              ) : (
+                <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
+                  {slide.title}
+                </h2>
+              )}
               <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-2xl leading-relaxed">
                 {slide.subtitle}
               </p>
