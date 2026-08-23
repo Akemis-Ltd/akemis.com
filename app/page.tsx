@@ -172,7 +172,7 @@ export default function Home() {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-lg font-bold">Email Us</h4>
+                    <h3 className="text-lg font-bold">Email Us</h3>
                     <a
                       href="mailto:contact@akemis.com"
                       className="text-gray-400 hover:text-[#CD2653] transition"
