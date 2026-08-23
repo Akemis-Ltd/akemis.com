@@ -93,7 +93,7 @@ export default function Home() {
                     <span className="text-4xl font-black text-[#003366] mb-2">
                       {stat.value}
                     </span>
-                    <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">
                       {stat.label}
                     </span>
                   </div>
@@ -305,7 +305,7 @@ export default function Home() {
               </ul>
             </div>
           </div>
-          <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-sm text-gray-500">
+          <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-sm text-gray-400">
             <p>
               Copyright &copy; {new Date().getFullYear()} : All Rights Reserved
               by Akemis Limited
