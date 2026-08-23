@@ -79,6 +79,7 @@ export default function HeroCarousel() {
               </p>
               <a
                 href={slide.cta.href}
+                tabIndex={i === index ? 0 : -1}
                 className="inline-block px-8 py-4 bg-[#CD2653] text-white font-semibold rounded-full hover:bg-[#A11D40] transition-all transform hover:-translate-y-1 shadow-[0_0_20px_rgba(205,38,83,0.5)]"
               >
                 {slide.cta.label}
@@ -88,16 +89,21 @@ export default function HeroCarousel() {
         </div>
       ))}
 
-      <div className="absolute bottom-8 left-0 right-0 z-30 flex justify-center space-x-3">
+      <div className="absolute bottom-8 left-0 right-0 z-30 flex justify-center space-x-2">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setIndex(i)}
             aria-label={`Go to slide ${i + 1}`}
-            className={`h-3 rounded-full transition-all duration-300 ${
-              i === index ? "w-10 bg-[#CD2653]" : "w-3 bg-white/50 hover:bg-white"
-            }`}
-          />
+            aria-current={i === index ? "true" : undefined}
+            className="flex h-8 min-w-8 items-center justify-center rounded-full"
+          >
+            <span
+              className={`block h-3 rounded-full transition-all duration-300 ${
+                i === index ? "w-10 bg-[#CD2653]" : "w-3 bg-white/50 hover:bg-white"
+              }`}
+            />
+          </button>
         ))}
       </div>
     </section>
