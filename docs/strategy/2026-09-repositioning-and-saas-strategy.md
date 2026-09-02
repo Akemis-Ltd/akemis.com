@@ -275,6 +275,8 @@ Positioning: "A senior team that ships a working product in weeks, using AI-assi
 
 ## 10. Decisions needed
 
+Decided on 2026-09-02. The outcomes and the resulting plan are in `2026-09-launch-plan-to-end-september.md`.
+
 1. Product name: keep "Akemis Ledger" or brand the SaaS separately?
 2. Is Managed open to new consultants, or capped to the current portfolio while Ledger scales?
 3. Do BPO, lead generation and ERP consulting stay on the site at all?
