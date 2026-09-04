@@ -1,12 +1,6 @@
-import type { MetadataRoute } from "next";
-
-export const dynamic = "force-static";
-
+import type { MetadataRoute } from 'next';
+import { locales, routes, href } from '@/lib/content';
+export const dynamic = 'force-static';
 export default function sitemap(): MetadataRoute.Sitemap {
-  return ["", "/creators/privacy", "/creators/terms"].map((path) => ({
-    url: `https://akemis.com${path}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly",
-    priority: path === "" ? 1 : 0.3,
-  }));
+ return locales.flatMap(lang=>routes.map(route=>({url:`https://akemis.com${href(lang,route)}`,changeFrequency:'monthly' as const,priority:route===''?1:0.7,alternates:{languages:Object.fromEntries(locales.map(l=>[l,`https://akemis.com${href(l,route)}`]))}})));
 }

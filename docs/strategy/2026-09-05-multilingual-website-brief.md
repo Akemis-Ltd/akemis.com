@@ -78,3 +78,24 @@ guarantees. Remove BPO and lead-generation positioning in the redesign.
 
 This preparation restores the editable baseline. The new design, translated
 pages and working contact flow are subsequent implementation work.
+
+## Implementation status — 5 September
+
+- Implemented 18 pages across EN/ES/FR, shared service layouts, mobile navigation,
+  locale-preserving language links, localized metadata and a localized sitemap.
+- Retained both Creator legal routes and repaired their internal navigation.
+- Added a translated contact form and Vercel Node.js endpoint using Resend.
+  See [contact setup](../contact-email-setup.md) for activation requirements.
+- Lint, TypeScript/production build and four contact-handler test groups pass.
+  HTTP checks passed for all 18 locale routes, HTML language, canonical and
+  reciprocal alternate URLs, single H1s, legal/SEO routes, invalid-route 404s,
+  and the English root redirect. Local browser checks confirmed the form's
+  unavailable state retains entered text. Desktop and 390px service layouts
+  were inspected; a complete mobile interaction pass remains outstanding.
+- Vercel CLI preview deployed successfully and independent inspection reports
+  Ready: https://akemis-qt8poin0v-akemis-dev-projects.vercel.app
+  Preview access redirects unauthenticated requests to Vercel authentication.
+- No Resend variables, resources or connectors are configured for akemis-com.
+  Live sending and mailbox delivery are **not verified**. Configure a verified
+  sender and sending key, redeploy and test before approving contact delivery.
+- Production deployment and domain settings have not been changed.

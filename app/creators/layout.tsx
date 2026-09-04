@@ -1,3 +1,4 @@
+import "../globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
@@ -18,7 +19,7 @@ export default function CreatorsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans">
+    <html lang="en"><body><div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans">
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
@@ -64,6 +65,6 @@ export default function CreatorsLayout({
           reserved.
         </p>
       </footer>
-    </div>
+    </div></body></html>
   );
 }

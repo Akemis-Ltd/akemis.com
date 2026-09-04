@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -74,9 +75,9 @@ export default function TermsOfService() {
               By authorising the Service through TikTok OAuth, you grant Akemis
               a limited, non-exclusive, revocable licence to access, process,
               and display the data described in our{" "}
-              <a className="text-[#CD2653] hover:underline" href="/creators/privacy">
+              <Link className="text-[#CD2653] hover:underline" href="/creators/privacy">
                 Privacy Policy
-              </a>
+              </Link>
               , solely to provide the Service to you and to compute commission
               entitlements.
             </li>
@@ -165,9 +166,9 @@ export default function TermsOfService() {
             any reason. Upon termination, Akemis will cease processing your data
             and delete or anonymise stored data within the retention windows set
             out in the{" "}
-            <a className="text-[#CD2653] hover:underline" href="/creators/privacy">
+            <Link className="text-[#CD2653] hover:underline" href="/creators/privacy">
               Privacy Policy
-            </a>
+            </Link>
             .
           </p>
         </Section>
