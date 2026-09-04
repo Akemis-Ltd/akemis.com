@@ -20,8 +20,8 @@ not approved product names. Keep managed contracting distinct from software.
 - Restored editable Next.js source from `origin/chore/bump-next-16.2.6`
   (`7cb8d7c`), replacing the checked-in generated export.
 - Retained the strategy documents from main and existing creator legal routes.
-- Set explicit Vercel Next.js build configuration using the existing static
-  export (`out`). No application secrets are needed for this baseline.
+- Set explicit Vercel Next.js build configuration using `.next`, with static
+  export disabled. No application secrets are needed for this baseline.
 - Production settings and domains must remain unchanged during preview testing.
 
 ## Inspection findings
@@ -68,9 +68,9 @@ guarantees. Remove BPO and lead-generation positioning in the redesign.
   reciprocal language alternates, localized social metadata and sitemap entries.
 - Preserve `/creators/privacy` and `/creators/terms` links.
 - Provide mobile navigation, keyboard access and visible focus states.
-- Replace the inert contact form with a verified delivery flow. A server handler
-  requires changing the current static-export setup; an external form service
-  is another option. Never display a success state without delivery confirmation.
+- Replace the inert contact form with a verified delivery flow. The standard
+  Next.js deployment supports a server handler; an external form service is
+  another option. Never display a success state without delivery confirmation.
 - Verify lint, production build, locale switching, direct links, mobile layouts,
   legal routes and contact delivery before approving the redesigned preview.
 - Push this feature branch for Vercel preview testing; verify deployment status
