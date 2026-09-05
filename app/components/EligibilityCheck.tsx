@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { Dictionary, Locale } from "../i18n";
 import {
-  CONTACT_EMAIL,
-  SERVICE_CATEGORIES,
   WAVE1_CLIENT_COUNTRIES,
   WAVE1_CONSULTANT_COUNTRIES,
+  countryList,
 } from "../lib/site";
 
 type Answers = {
@@ -17,28 +17,34 @@ type Answers = {
 };
 
 const EMPTY: Answers = { residence: "", status: "", clientCountry: "", category: "", volume: "" };
-
 const OTHER = "__other__";
 
-export default function EligibilityCheck() {
-  const [a, setA] = useState<Answers>(EMPTY);
+export default function EligibilityCheck({ locale, d }: { locale: Locale; d: Dictionary }) {
+  const [answers, setAnswers] = useState<Answers>(EMPTY);
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState<"no" | "sending" | "yes" | "error">("no");
+  const e = d.eligibility;
 
-  const complete = Object.values(a).every(Boolean);
+  const complete = Object.values(answers).every(Boolean);
 
   const verdict = useMemo(() => {
     if (!complete) return null;
     const reasons: string[] = [];
-    if (a.residence === OTHER) reasons.push("your country of residence is not in the first launch wave");
-    if (a.clientCountry === OTHER) reasons.push("your client's country is not in the first launch wave");
-    if (a.status === "employee") reasons.push("the service is for independent consultants, not employees seeking a payroll");
-    if (a.volume === "lt3k") reasons.push("engagements below the launch minimum go to the waitlist for the software-only plan");
+    if (answers.residence === OTHER) reasons.push(e.reasons.residence);
+    if (answers.clientCountry === OTHER) reasons.push(e.reasons.client);
+    if (answers.status === "employee") reasons.push(e.reasons.employee);
+    if (answers.volume === "lt3k") reasons.push(e.reasons.volume);
     return { pass: reasons.length === 0, reasons };
-  }, [a, complete]);
+  }, [answers, complete, e.reasons]);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  const consultantCountries = useMemo(
+    () => countryList(locale, WAVE1_CONSULTANT_COUNTRIES),
+    [locale],
+  );
+  const clientCountries = useMemo(() => countryList(locale, WAVE1_CLIENT_COUNTRIES), [locale]);
+
+  async function submit(event: React.FormEvent) {
+    event.preventDefault();
     setSent("sending");
     try {
       const res = await fetch("/api/contact", {
@@ -46,8 +52,9 @@ export default function EligibilityCheck() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           kind: verdict?.pass ? "eligibility-pass" : "waitlist",
+          locale,
           email,
-          answers: a,
+          answers,
         }),
       });
       setSent(res.ok ? "yes" : "error");
@@ -56,37 +63,56 @@ export default function EligibilityCheck() {
     }
   }
 
-  const set = (k: keyof Answers) => (e: React.ChangeEvent<HTMLSelectElement>) =>
-    setA((prev) => ({ ...prev, [k]: e.target.value }));
+  const set = (key: keyof Answers) => (event: React.ChangeEvent<HTMLSelectElement>) =>
+    setAnswers((prev) => ({ ...prev, [key]: event.target.value }));
 
   return (
     <div className="rounded-lg border border-line bg-white p-6 shadow-sm sm:p-8">
       <div className="grid gap-4 sm:grid-cols-2">
-        <Select label="Where do you live?" value={a.residence} onChange={set("residence")}>
-          <CountryOptions list={WAVE1_CONSULTANT_COUNTRIES} />
+        <Select label={e.qResidence} value={answers.residence} onChange={set("residence")} placeholder={e.choose}>
+          {consultantCountries.map((c) => (
+            <option key={c.code} value={c.code}>
+              {c.name}
+            </option>
+          ))}
+          <option value={OTHER}>{e.otherCountry}</option>
         </Select>
-        <Select label="How do you work today?" value={a.status} onChange={set("status")}>
-          <option value="sole">As a sole trader or auto-entrepreneur</option>
-          <option value="company">Through my own company</option>
-          <option value="none">Not set up yet</option>
-          <option value="employee">I am an employee looking for payroll</option>
+
+        <Select label={e.qStatus} value={answers.status} onChange={set("status")} placeholder={e.choose}>
+          <option value="sole">{e.statuses.sole}</option>
+          <option value="company">{e.statuses.company}</option>
+          <option value="none">{e.statuses.none}</option>
+          <option value="employee">{e.statuses.employee}</option>
         </Select>
-        <Select label="Where is your client based?" value={a.clientCountry} onChange={set("clientCountry")}>
-          <CountryOptions list={WAVE1_CLIENT_COUNTRIES} />
+
+        <Select
+          label={e.qClient}
+          value={answers.clientCountry}
+          onChange={set("clientCountry")}
+          placeholder={e.choose}
+        >
+          {clientCountries.map((c) => (
+            <option key={c.code} value={c.code}>
+              {c.name}
+            </option>
+          ))}
+          <option value={OTHER}>{e.otherCountry}</option>
         </Select>
-        <Select label="What do you do?" value={a.category} onChange={set("category")}>
-          {SERVICE_CATEGORIES.map((c) => (
+
+        <Select label={e.qCategory} value={answers.category} onChange={set("category")} placeholder={e.choose}>
+          {d.categories.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
           ))}
-          <option value={OTHER}>Something else</option>
+          <option value={OTHER}>{e.otherCategory}</option>
         </Select>
-        <Select label="Monthly invoicing, roughly" value={a.volume} onChange={set("volume")}>
-          <option value="lt3k">Under USD 3,000</option>
-          <option value="3k-10k">USD 3,000 to 10,000</option>
-          <option value="10k-25k">USD 10,000 to 25,000</option>
-          <option value="gt25k">Over USD 25,000</option>
+
+        <Select label={e.qVolume} value={answers.volume} onChange={set("volume")} placeholder={e.choose}>
+          <option value="lt3k">{e.volumes.lt3k}</option>
+          <option value="3k-10k">{e.volumes.mid}</option>
+          <option value="10k-25k">{e.volumes.high}</option>
+          <option value="gt25k">{e.volumes.top}</option>
         </Select>
       </div>
 
@@ -99,33 +125,29 @@ export default function EligibilityCheck() {
         >
           {verdict.pass ? (
             <>
-              <p className="font-display text-xl font-bold text-navy">You are in the first wave.</p>
-              <p className="mt-1 text-sm text-ink-2">
-                Leave your email and we will send the onboarding pack: what we need for KYC, the
-                consultant agreement to read, and the fee schedule.
-              </p>
+              <p className="font-display text-xl font-bold text-navy">{e.passTitle}</p>
+              <p className="mt-1 text-sm text-ink-2">{e.passBody}</p>
             </>
           ) : (
             <>
-              <p className="font-display text-xl font-bold text-ink">Not yet, but soon.</p>
+              <p className="font-display text-xl font-bold text-ink">{e.failTitle}</p>
               <p className="mt-1 text-sm text-ink-2">
-                Because {verdict.reasons.join("; ")}. Join the waitlist and we will tell you when
-                your situation is covered.
+                {e.failBodyPrefix} {verdict.reasons.join("; ")}. {e.failBodySuffix}
               </p>
             </>
           )}
 
           {sent === "yes" ? (
-            <p className="mt-4 text-sm font-medium text-navy">Thanks. You will hear from us.</p>
+            <p className="mt-4 text-sm font-medium text-navy">{e.thanks}</p>
           ) : (
             <form onSubmit={submit} className="mt-4 flex flex-wrap gap-3">
               <input
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                aria-label="Email address"
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder={e.emailPlaceholder}
+                aria-label={e.emailLabel}
                 className="min-w-0 flex-1 rounded-md border border-line bg-white px-3 py-2.5 text-sm"
               />
               <button
@@ -133,11 +155,11 @@ export default function EligibilityCheck() {
                 disabled={sent === "sending"}
                 className="rounded-full bg-crimson px-5 py-2.5 text-sm font-semibold text-white hover:bg-crimson-deep disabled:opacity-60"
               >
-                {verdict.pass ? "Send me the onboarding pack" : "Join the waitlist"}
+                {verdict.pass ? e.submitPass : e.submitFail}
               </button>
               {sent === "error" && (
                 <p role="alert" className="w-full text-sm text-crimson-deep">
-                  That did not go through. Email us at {CONTACT_EMAIL}.
+                  {e.error}
                 </p>
               )}
             </form>
@@ -152,11 +174,13 @@ function Select({
   label,
   value,
   onChange,
+  placeholder,
   children,
 }: {
   label: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  placeholder: string;
   children: React.ReactNode;
 }) {
   return (
@@ -168,24 +192,10 @@ function Select({
         className="rounded-md border border-line bg-white px-3 py-2.5 text-ink focus:border-navy"
       >
         <option value="" disabled>
-          Choose…
+          {placeholder}
         </option>
         {children}
       </select>
     </label>
-  );
-}
-
-function CountryOptions({ list }: { list: Record<string, string> }) {
-  const entries = Object.entries(list).sort((x, y) => x[1].localeCompare(y[1]));
-  return (
-    <>
-      {entries.map(([code, name]) => (
-        <option key={code} value={code}>
-          {name}
-        </option>
-      ))}
-      <option value={OTHER}>Another country</option>
-    </>
   );
 }

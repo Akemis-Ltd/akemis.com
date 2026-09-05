@@ -7,6 +7,7 @@ const MAX = { name: 200, email: 320, company: 200, message: 5000 };
 
 type Payload = {
   kind?: string;
+  locale?: string;
   name?: string;
   email?: string;
   company?: string;
@@ -42,6 +43,7 @@ export async function POST(req: Request) {
   }
 
   const kind = clean(body.kind, 40) || "contact";
+  const locale = clean(body.locale, 8);
   const email = clean(body.email, MAX.email);
   if (!isEmail(email)) {
     return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
@@ -64,6 +66,7 @@ export async function POST(req: Request) {
       `Email: ${email}`,
       `Company: ${company || "-"}`,
       `Topic: ${topic || "-"}`,
+      `Language: ${locale || "-"}`,
       "",
       message,
     ].join("\n");
@@ -73,7 +76,7 @@ export async function POST(req: Request) {
       .filter(([, v]) => typeof v === "string")
       .map(([k, v]) => `${k}: ${clean(v, 120)}`);
     subject = `[akemis.com] ${kind === "waitlist" ? "Waitlist" : "Eligible consultant"} — ${email}`;
-    text = [`Email: ${email}`, `Kind: ${kind}`, "", ...lines].join("\n");
+    text = [`Email: ${email}`, `Kind: ${kind}`, `Language: ${locale || "-"}`, "", ...lines].join("\n");
   } else {
     return NextResponse.json({ error: "Unknown request." }, { status: 400 });
   }
